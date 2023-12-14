@@ -1,5 +1,5 @@
 {
-    "executable_name": "champsim_test_pseudoLRU",
+    "executable_name": "champsim_test_LRU",
     "block_size": 64,
     "page_size": 4096,
     "heartbeat_frequency": 10000000,
@@ -52,7 +52,7 @@
         "virtual_prefetch": true,
         "prefetch_activate": "LOAD,PREFETCH",
         "prefetcher": "no_instr",
-        "replacement": "pseudoLRU"
+        "replacement": "lru"
     },
 
     "L1D": {
@@ -69,7 +69,7 @@
         "virtual_prefetch": false,
         "prefetch_activate": "LOAD,PREFETCH",
         "prefetcher": "no",
-        "replacement": "pseudoLRU"
+        "replacement": "lru"
     },
 
     "L2C": {
@@ -86,7 +86,7 @@
         "virtual_prefetch": false,
         "prefetch_activate": "LOAD,PREFETCH",
         "prefetcher": "no",
-        "replacement": "pseudoLRU"
+        "replacement": "lru"
     },
 
     "ITLB": {
@@ -158,7 +158,7 @@
         "virtual_prefetch": false,
         "prefetch_activate": "LOAD,PREFETCH",
         "prefetcher": "no",
-        "replacement": "pseudoLRU"
+        "replacement": "lru"
     },
 
     "physical_memory": {
