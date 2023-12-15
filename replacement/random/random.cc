@@ -34,7 +34,7 @@ void CACHE::update_replacement_state(
 		[[maybe_unused]] uint8_t hit
 		)
 {
-	// Nothing neeeds to be done
+	// Nothing needs to be done
 	return;
 }
 

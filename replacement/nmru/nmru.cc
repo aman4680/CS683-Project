@@ -1,36 +1,40 @@
 #include <iostream>
-#include <stdlib.h>
-#include <time.h>
+#include <cassert>
 
 #include "cache.h"
 
-uint32_t mru_way = -1;
+uint32_t* mru_ways;
 
 void CACHE::initialize_replacement()
 {
-	// Nothing needs to be done
-	return;
+	// Initialize the MRU position
+	mru_ways = new uint32_t[NUM_SET];
+	for(uint32_t idx = 0; idx < NUM_SET; idx++)
+		mru_ways[idx] = 0;
 }
 
 uint32_t CACHE::find_victim(
 		[[maybe_unused]] uint32_t triggering_cpu,
 		[[maybe_unused]] uint64_t instr_id,
-		[[maybe_unused]] uint32_t set,
+		uint32_t set,
 		[[maybe_unused]] const BLOCK* current_set,
 		[[maybe_unused]] uint64_t ip,
 		[[maybe_unused]] uint64_t full_addr,
 		[[maybe_unused]] uint32_t type
 		)
 {
+	// Sanity check
+	assert(set < NUM_SET);
+
 	// Randomly pick a victim which does not match the MRU way
-	uint32_t victim = mru_way;
-       while((victim = (uint32_t)(rand() % NUM_WAY)) == mru_way);
-       return victim;
+	uint32_t victim = mru_ways[set];
+       	while((victim = (uint32_t)(rand() % NUM_WAY)) == mru_ways[set]);
+       	return victim;
 }
 
 void CACHE::update_replacement_state(
 		[[maybe_unused]] uint32_t triggering_cpu,
-		[[maybe_unused]] uint32_t set,
+		uint32_t set,
 		uint32_t way,
 		[[maybe_unused]] uint64_t full_addr,
 		[[maybe_unused]] uint64_t ip,
@@ -39,12 +43,16 @@ void CACHE::update_replacement_state(
 		[[maybe_unused]] uint8_t hit
 		)
 {
+	// Sanity checks
+	assert(set < NUM_SET);
+	assert(way < NUM_WAY);
+
 	// Set the MRU way on cache hits and cache fills
-	mru_way = way;
+	mru_ways[set] = way;
 }
 
 void CACHE::replacement_final_stats()
 {
-	// Nothing needs to be done
+	delete[] mru_ways;
 	return;
 }
