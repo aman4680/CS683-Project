@@ -55,7 +55,7 @@ void CACHE::initialize_replacement()
         LFU_Policy::policies[this] = std::vector<LFU_Policy::LFU>();
 
         // Allocate the policies, one per cache set
-        for(uint32_t idx = 0; idx < NUM_SET; idx++)
+        for(size_t idx = 0; idx < NUM_SET; idx++)
                 LFU_Policy::policies[this].emplace_back(NUM_WAY);
 }
 

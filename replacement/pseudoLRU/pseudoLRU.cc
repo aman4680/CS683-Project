@@ -1,5 +1,7 @@
 #include <iostream>
 #include <cassert>
+#include <map>
+#include <vector>
 
 // #define DEBUG
 
@@ -25,33 +27,24 @@ namespace PseudoLRU
 				}
 			};
 
-			Node* all_nodes;	// Array of all the nodes of the LRUTree
-			uint32_t num_nodes;	// The total number of nodes in the tree
-			uint32_t num_leaves;	// Number of leaves in the LRUTree
+                        std::vector<Node> all_nodes;	// Array of all the nodes of the LRUTree
+			uint32_t num_nodes;	        // The total number of nodes in the tree
+			uint32_t num_leaves;	        // Number of leaves in the LRUTree
 
 		public:
-			LRUTree()
-			{
-				this->all_nodes = nullptr;
-				this->num_nodes = 0;
-				this->num_leaves = 0;
-			}
-
-			// Build the LRU tree with num_ways leaves
-			void set_ways(uint32_t num_ways)
+			LRUTree(uint32_t num_ways)
 			{
 				this->num_leaves = num_ways;
 				this->num_nodes = (this->num_leaves * 2) - 1;
+				this->all_nodes = std::vector<Node>(this->num_nodes);   // Allocate the nodes
 
-				this->all_nodes = new Node[this->num_nodes]();	// Allocate the nodes
-
-				// Set the way for the leaf nodes
+                                // Set the way for the leaf nodes
 				uint32_t way = 0;
 				for(uint32_t idx = this->num_nodes - this->num_leaves; idx < this->num_nodes; idx++)
 					this->all_nodes[idx].way = way++;
 			}
 
-			// Move the way to the MRU position
+                        // Move the way to the MRU position
 			void move_to_MRU(uint32_t way)
 			{
 				// Run sanity check
@@ -101,16 +94,11 @@ namespace PseudoLRU
 					std::cout << std::endl;
 				}
 			#endif
-
-			~LRUTree()
-			{
-				if(this->all_nodes != nullptr)
-					delete[] this->all_nodes;
-			}
 	};
+
+        std::map<CACHE*, std::vector<LRUTree>> trees;
 }
 
-PseudoLRU::LRUTree* trees;
 
 void CACHE::initialize_replacement()
 {
@@ -118,11 +106,11 @@ void CACHE::initialize_replacement()
 		std::cout << "[DEBUG] Creating LRU trees" << std::endl;
 	#endif
 
-	trees = new PseudoLRU::LRUTree[NUM_SET]();	// Create the LRU Trees for all the cache sets
+        PseudoLRU::trees[this] = std::vector<PseudoLRU::LRUTree>();        // Create the LRU Trees for all the cache sets
 
 	// Set the number of ways for all sets
 	for(uint32_t i = 0; i < NUM_SET; i++)
-		trees[i].set_ways(NUM_WAY);
+		PseudoLRU::trees[this].emplace_back(NUM_WAY);
 }
 
 uint32_t CACHE::find_victim(
@@ -136,17 +124,17 @@ uint32_t CACHE::find_victim(
 		)
 {
 	// Run sanity check
-	assert(set < NUM_SET);
+	assert(set < PseudoLRU::trees[this].size());
 
 	#ifdef DEBUG
-		int32_t victim = trees[set].get_LRU();
+		int32_t victim = PseudoLRU::trees[this][set].get_LRU();
 		std::cout << "[DEBUG] Set:" << set << " Found victim way " << victim << std::endl;
-		trees[set].print_directions();
+                PseudoLRU::trees[this][set].print_directions();
 		return (uint32_t)victim;
 	#endif
 
 	// Victim is at the LRU position
-	return (uint32_t)trees[set].get_LRU();
+	return (uint32_t)PseudoLRU::trees[this][set].get_LRU();
 }
 
 void CACHE::update_replacement_state(
@@ -162,23 +150,19 @@ void CACHE::update_replacement_state(
 {
 	// Run sanity checks
 	assert(way < NUM_WAY);
-	assert(set < NUM_SET);
+	assert(set < PseudoLRU::trees[this].size());
 
 	// Move the way to the MRU position
 	if(!hit)	// Only update the state on cache fills
-		trees[set].move_to_MRU(way);
+                PseudoLRU::trees[this][set].move_to_MRU(way);
 
 	#ifdef DEBUG
 		std::cout << "[DEBUG] Set:" << set << " way " << way << " moved to MRU" << std::endl;
-		trees[set].print_directions();
+                PseudoLRU::trees[this][set].print_directions();
 	#endif
 }
 
 void CACHE::replacement_final_stats()
 {
-	#ifdef DEBUG
-		std::cout << "[DEBUG] Deleting LRU trees" << std::endl;
-	#endif
-
-	delete[] trees;
+        // Do nothing
 }

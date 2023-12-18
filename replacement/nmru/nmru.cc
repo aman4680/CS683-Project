@@ -1,16 +1,21 @@
 #include <iostream>
 #include <cassert>
+#include <map>
 
 #include "cache.h"
 
-uint32_t* mru_ways;
+namespace NMRU
+{
+        std::map<CACHE*, std::vector<uint32_t>> mru_ways;
+}
+
 
 void CACHE::initialize_replacement()
 {
 	// Initialize the MRU position
-	mru_ways = new uint32_t[NUM_SET];
+        NMRU::mru_ways[this] = std::vector<uint32_t>();
 	for(uint32_t idx = 0; idx < NUM_SET; idx++)
-		mru_ways[idx] = 0;
+		NMRU::mru_ways[this].push_back(0);
 }
 
 uint32_t CACHE::find_victim(
@@ -24,11 +29,11 @@ uint32_t CACHE::find_victim(
 		)
 {
 	// Sanity check
-	assert(set < NUM_SET);
+	assert(set < NMRU::mru_ways[this].size());
 
 	// Randomly pick a victim which does not match the MRU way
-	uint32_t victim = mru_ways[set];
-       	while((victim = (uint32_t)(rand() % NUM_WAY)) == mru_ways[set]);
+	uint32_t victim = NMRU::mru_ways[this][set];
+       	while((victim = (uint32_t)(rand() % NUM_WAY)) == NMRU::mru_ways[this][set]);
        	return victim;
 }
 
@@ -44,15 +49,15 @@ void CACHE::update_replacement_state(
 		)
 {
 	// Sanity checks
-	assert(set < NUM_SET);
+	assert(set < NMRU::mru_ways[this].size());
 	assert(way < NUM_WAY);
 
 	// Set the MRU way on cache hits and cache fills
-	mru_ways[set] = way;
+        NMRU::mru_ways[this][set] = way;
 }
 
 void CACHE::replacement_final_stats()
 {
-	delete[] mru_ways;
-	return;
+	// Do nothing
+        return;
 }

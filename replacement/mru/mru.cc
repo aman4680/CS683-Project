@@ -1,16 +1,20 @@
 #include <iostream>
 #include <cassert>
+#include <map>
 
 #include "cache.h"
 
-uint32_t* mru_ways;
+namespace MRU
+{
+        std::map<CACHE*, std::vector<uint32_t>> mru_ways;
+}
 
 void CACHE::initialize_replacement()
 {
 	// Initialize the MRU position
-	mru_ways = new uint32_t[NUM_SET];
+        MRU::mru_ways[this] = std::vector<uint32_t>();
 	for(uint32_t idx = 0; idx < NUM_SET; idx++)
-		mru_ways[idx] = 0;
+		MRU::mru_ways[this].push_back(0);
 }
 
 uint32_t CACHE::find_victim(
@@ -24,10 +28,10 @@ uint32_t CACHE::find_victim(
 		)
 {
 	// Sanity check
-	assert(set < NUM_SET);
+	assert(set < MRU::mru_ways[this].size());
 
 	// The victim is the most recently used way
-	return mru_ways[set];
+	return MRU::mru_ways[this][set];
 }
 
 void CACHE::update_replacement_state(
@@ -42,15 +46,15 @@ void CACHE::update_replacement_state(
 		)
 {
 	// Sanity checks
-	assert(set < NUM_SET);
+	assert(set < MRU::mru_ways[this].size());
 	assert(way < NUM_WAY);
 
 	// Set the MRU way on cache hits and cache fills
-	mru_ways[set] = way;
+        MRU::mru_ways[this][set] = way;
 }
 
 void CACHE::replacement_final_stats()
 {
-	delete[] mru_ways;
-	return;
+	// Do nothing
+        return;
 }
