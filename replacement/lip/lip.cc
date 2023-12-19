@@ -39,7 +39,7 @@ uint32_t CACHE::find_victim(
 
 	// Find the way which was accesed most futher back in the past
 	std::vector<uint32_t>::iterator lru_it = std::min_element(LIP::last_used[this][set].begin(), LIP::last_used[this][set].end());
-	return (uint32_t)(std::distance(LIP::last_used[this][set].begin(), lru_it));
+	return static_cast<uint32_t>(std::distance(LIP::last_used[this][set].begin(), lru_it));
 }
 
 void CACHE::update_replacement_state(

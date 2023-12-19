@@ -14,7 +14,7 @@ void CACHE::initialize_replacement()
 {
 	// Initialize the MRU position
         NMRU::mru_ways[this] = std::vector<uint32_t>();
-	for(uint32_t idx = 0; idx < NUM_SET; idx++)
+	for(size_t idx = 0; idx < NUM_SET; idx++)
 		NMRU::mru_ways[this].push_back(0);
 }
 
@@ -33,7 +33,7 @@ uint32_t CACHE::find_victim(
 
 	// Randomly pick a victim which does not match the MRU way
 	uint32_t victim = NMRU::mru_ways[this][set];
-       	while((victim = (uint32_t)(rand() % NUM_WAY)) == NMRU::mru_ways[this][set]);
+       	while((victim = static_cast<uint32_t>(rand() % NUM_WAY)) == NMRU::mru_ways[this][set]);
        	return victim;
 }
 

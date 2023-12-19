@@ -13,7 +13,7 @@ void CACHE::initialize_replacement()
 {
 	// Initialize the MRU position
         MRU::mru_ways[this] = std::vector<uint32_t>();
-	for(uint32_t idx = 0; idx < NUM_SET; idx++)
+	for(size_t idx = 0; idx < NUM_SET; idx++)
 		MRU::mru_ways[this].push_back(0);
 }
 

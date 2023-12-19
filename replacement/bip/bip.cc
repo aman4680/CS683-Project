@@ -54,7 +54,7 @@ uint32_t CACHE::find_victim(
 
         // Return the LRU way
         std::vector<uint32_t>::iterator min_it = std::min_element(BIP::last_used[this][set].begin(), BIP::last_used[this][set].end());
-        return (uint32_t)std::distance(BIP::last_used[this][set].begin(), min_it);
+        return static_cast<uint32_t>(std::distance(BIP::last_used[this][set].begin(), min_it));
 }
 
 void CACHE::update_replacement_state(

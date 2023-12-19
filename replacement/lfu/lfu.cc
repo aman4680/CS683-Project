@@ -43,7 +43,7 @@ namespace LFU_Policy
                         uint32_t get_lfu()
                         {
                                 std::vector<uint32_t>::iterator min_way = std::min_element(this->frequencies.begin(), this->frequencies.end());
-                                return (uint32_t)(std::distance(this->frequencies.begin(), min_way));
+                                return static_cast<uint32_t>(std::distance(this->frequencies.begin(), min_way));
                         }
         };
 

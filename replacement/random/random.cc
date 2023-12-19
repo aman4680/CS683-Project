@@ -20,7 +20,7 @@ uint32_t CACHE::find_victim(
 		)
 {
 	// Randomly pick a victim
-	return (uint32_t)(rand() % NUM_WAY);
+	return static_cast<uint32_t>(rand() % NUM_WAY);
 }
 
 void CACHE::update_replacement_state(
