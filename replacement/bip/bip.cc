@@ -21,9 +21,14 @@ void CACHE::initialize_replacement()
         const char* numerator = std::getenv("EPS");
         if(numerator != nullptr)
         {
+                uint32_t num = 0;
                 std::stringstream strValue;
                 strValue << numerator;
-                strValue >> BIP::NUMERATOR;
+                strValue >> num;
+
+                // Sanity Check
+                assert(num <= DENOMINATOR);
+                BIP::NUMERATOR = num;
         }
 
         // Create the LRU stacks for each cache set
