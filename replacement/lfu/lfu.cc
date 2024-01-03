@@ -83,13 +83,17 @@ void CACHE::update_replacement_state(
                 [[maybe_unused]] uint64_t full_addr,
                 [[maybe_unused]] uint64_t ip,
                 [[maybe_unused]] uint64_t victim_addr,
-                [[maybe_unused]] uint32_t type,
-                [[maybe_unused]] uint8_t hit
+                uint32_t type,
+                uint8_t hit
                 )
 {
         // Run sanity checks
         assert(way < NUM_WAY);
         assert(set < LFU_Policy::policies[this].size());
+
+        // Don't update state for writeback hits
+        if(hit && access_type{type} == access_type::WRITE)
+                return;
 
         // Increment frequency
         if(!hit)        // Only update the state on cache fills

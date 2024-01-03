@@ -11,7 +11,7 @@
 
 namespace BIP
 {
-        uint32_t NUMERATOR = 0; // The higher the NUMERATOR, the more likely it is that inserts will be made at the LRU position
+        uint32_t NUMERATOR = 0; // The higher the NUMERATOR, the more likely it is that BIP will behave like LIP
         std::map<CACHE*, std::vector<std::vector<uint32_t>>> last_used;
 }
 
@@ -45,14 +45,14 @@ void CACHE::initialize_replacement()
 }
 
 uint32_t CACHE::find_victim(
-		[[maybe_unused]] uint32_t triggering_cpu,
-		[[maybe_unused]] uint64_t instr_id,
-		uint32_t set,
-		[[maybe_unused]] const BLOCK* current_set,
-		[[maybe_unused]] uint64_t ip,
-		[[maybe_unused]] uint64_t full_addr,
-		[[maybe_unused]] uint32_t type
-		)
+                [[maybe_unused]] uint32_t triggering_cpu,
+                [[maybe_unused]] uint64_t instr_id,
+                uint32_t set,
+                [[maybe_unused]] const BLOCK* current_set,
+                [[maybe_unused]] uint64_t ip,
+                [[maybe_unused]] uint64_t full_addr,
+                [[maybe_unused]] uint32_t type
+                )
 {
         // Sanity checks
         assert(set < BIP::last_used[this].size());
@@ -63,31 +63,40 @@ uint32_t CACHE::find_victim(
 }
 
 void CACHE::update_replacement_state(
-		[[maybe_unused]] uint32_t triggering_cpu,
-		uint32_t set,
-		uint32_t way,
-		[[maybe_unused]] uint64_t full_addr,
-		[[maybe_unused]] uint64_t ip,
-		[[maybe_unused]] uint64_t victim_addr,
-		[[maybe_unused]] uint32_t type,
-		[[maybe_unused]] uint8_t hit
-		)
+                [[maybe_unused]] uint32_t triggering_cpu,
+                uint32_t set,
+                uint32_t way,
+                [[maybe_unused]] uint64_t full_addr,
+                [[maybe_unused]] uint64_t ip,
+                [[maybe_unused]] uint64_t victim_addr,
+                uint32_t type,
+                uint8_t hit
+                )
 {
         // Sanity checks
         assert(set < BIP::last_used[this].size());
         assert(way < BIP::last_used[this][set].size());
 
-        // Get a random number
-        uint32_t rand_val = rand() % DENOMINATOR;
+        // Don't update state for writeback hits
+        if(hit && access_type{type} == access_type::WRITE)
+                return;
 
-        if(rand_val > BIP::NUMERATOR)  // Insert at MRU
-        {
+        if(hit) // Cache hit
                 BIP::last_used[this][set][way] = current_cycle;
-        }
-        else    // Insert at LRU
+        else    // Cache miss
         {
-                uint32_t min_val = *std::min_element(BIP::last_used[this][set].begin(), BIP::last_used[this][set].end());
-                BIP::last_used[this][set][way] = min_val == 0 ? 0 : min_val - 1;
+                // Get a random number
+                uint32_t rand_val = rand() % DENOMINATOR;
+
+                if(rand_val >= BIP::NUMERATOR)  // Insert at MRU
+                {
+                        BIP::last_used[this][set][way] = current_cycle;
+                }
+                else    // Insert at LRU like LIP
+                {
+                        uint32_t min_val = *std::min_element(BIP::last_used[this][set].begin(), BIP::last_used[this][set].end());
+                        BIP::last_used[this][set][way] = min_val == 0 ? 0 : min_val - 1;
+                }
         }
 }
 
