@@ -30,11 +30,11 @@ namespace PACIPV_Policy
 
                 public:
                         PACIPV(uint32_t ways, decltype(demand_vector)& dv, decltype(prefetch_vector)& pv): num_ways(ways), demand_vector(dv), prefetch_vector(pv)
-                {
-                        // Initialize the RRPVs of all the ways
-                        uint32_t max_valid_rrpv = demand_vector.size() - 1;
-                        rrpvs.resize(num_ways, max_valid_rrpv);
-                }
+                        {
+                                // Initialize the RRPVs of all the ways
+                                uint32_t max_valid_rrpv = demand_vector.size() - 1;
+                                rrpvs.resize(num_ways, max_valid_rrpv);
+                        }
 
                         void demand_insert(uint32_t way)
                         {
