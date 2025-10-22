@@ -86,7 +86,7 @@ def parse_champsim_output(file_path):
 
 # --- Main Execution Logic ---
 if __name__ == "__main__":
-    results_dir = "./results/lru_policy/"
+    results_dir = "./results/lru_policy/secret_traces/"
     all_data = []
 
     # Check if the directory exists
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         ]
         df = df[column_order]
         
-        output_csv_path = "lru_policy_stats.csv"
+        output_csv_path = "secret_traces_lru_policy_stats.csv"
         df.to_csv(output_csv_path, index=False, float_format='%.6f')
         print(f"Successfully created CSV file: '{output_csv_path}'")
         print("\n--- First 5 rows of the generated data ---")

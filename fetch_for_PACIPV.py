@@ -89,7 +89,7 @@ def parse_champsim_output(file_path):
 # --- Main Execution Logic ---
 if __name__ == "__main__":
     # --- IMPORTANT: Change this to the directory containing your new result files ---
-    results_dir = "./results/pacipv_policy/"  
+    results_dir = "./results/pacipv_policy/secret_traces/"  
     all_data = []
 
     # Check if the directory exists
@@ -120,7 +120,7 @@ if __name__ == "__main__":
         df.rename(columns={"LRU IPC": "IPC"}, inplace=True)
         df = df[column_order]
         
-        output_csv_path = "pacipv_policy_stats.csv"
+        output_csv_path = "secret_traces_pacipv_policy_stats.csv"
         df.to_csv(output_csv_path, index=False, float_format='%.6f')
         print(f"Successfully created CSV file: '{output_csv_path}'")
         print("\n--- First 5 rows of the generated data ---")

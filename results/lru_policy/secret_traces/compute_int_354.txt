@@ -1,0 +1,350 @@
+WARNING: physical memory size is smaller than virtual memory size.
+
+*** ChampSim Multicore Out-of-Order Simulator ***
+Warmup Instructions: 25000000
+Simulation Instructions: 100000000
+Number of CPUs: 1
+Page size: 4096
+
+Off-chip DRAM Size: 4 GiB Channels: 1 Width: 64-bit Data Race: 3200 MT/s
+Heartbeat CPU 0 instructions: 10000000 cycles: 2935827 heartbeat IPC: 3.406 cumulative IPC: 3.406 (Simulation time: 00 hr 00 min 22 sec)
+Heartbeat CPU 0 instructions: 20000004 cycles: 5871506 heartbeat IPC: 3.406 cumulative IPC: 3.406 (Simulation time: 00 hr 00 min 45 sec)
+Warmup finished CPU 0 instructions: 25000004 cycles: 7339419 cumulative IPC: 3.406 (Simulation time: 00 hr 00 min 57 sec)
+Warmup complete CPU 0 instructions: 25000004 cycles: 7339419 cumulative IPC: 3.406 (Simulation time: 00 hr 00 min 57 sec)
+Heartbeat CPU 0 instructions: 30000003 cycles: 44565087 heartbeat IPC: 0.2584 cumulative IPC: 0.1343 (Simulation time: 00 hr 03 min 08 sec)
+Heartbeat CPU 0 instructions: 40000004 cycles: 118372519 heartbeat IPC: 0.1355 cumulative IPC: 0.1351 (Simulation time: 00 hr 07 min 29 sec)
+[cpu0_PTW_MSHR] entry:   0 address: 0x128db0 v_addr: 0x51cadb0 translation_level: 0 event_cycle: 18446744073709551615
+
+DEADLOCK! CPU 0 cycle 127205674
+cpu0_IFETCH empty
+
+cpu0_DECODE empty
+
+cpu0_DISPATCH empty
+
+[cpu0_ROB] entry:   0 instr_id: 41205620 fetched: 2 scheduled: 2 executed: 1 num_reg_dependent: 0 num_mem_ops: 1 event: 127204115
+[cpu0_ROB] entry:   1 instr_id: 41205621 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127203916
+[cpu0_ROB] entry:   2 instr_id: 41205622 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127203917
+[cpu0_ROB] entry:   3 instr_id: 41205623 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127203918
+[cpu0_ROB] entry:   4 instr_id: 41205624 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 2 num_mem_ops: 0 event: 127204079
+[cpu0_ROB] entry:   5 instr_id: 41205625 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204080
+[cpu0_ROB] entry:   6 instr_id: 41205626 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204081
+[cpu0_ROB] entry:   7 instr_id: 41205627 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127204080
+[cpu0_ROB] entry:   8 instr_id: 41205628 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204082
+[cpu0_ROB] entry:   9 instr_id: 41205629 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204115
+[cpu0_ROB] entry:  10 instr_id: 41205630 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204115
+[cpu0_ROB] entry:  11 instr_id: 41205631 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127205152
+[cpu0_ROB] entry:  12 instr_id: 41205632 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127204083
+[cpu0_ROB] entry:  13 instr_id: 41205633 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127205152
+[cpu0_ROB] entry:  14 instr_id: 41205634 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127204085
+[cpu0_ROB] entry:  15 instr_id: 41205635 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204087
+[cpu0_ROB] entry:  16 instr_id: 41205636 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204088
+[cpu0_ROB] entry:  17 instr_id: 41205637 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127204087
+[cpu0_ROB] entry:  18 instr_id: 41205638 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204089
+[cpu0_ROB] entry:  19 instr_id: 41205639 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204116
+[cpu0_ROB] entry:  20 instr_id: 41205640 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204116
+[cpu0_ROB] entry:  21 instr_id: 41205641 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127205162
+[cpu0_ROB] entry:  22 instr_id: 41205642 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127204089
+[cpu0_ROB] entry:  23 instr_id: 41205643 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127205162
+[cpu0_ROB] entry:  24 instr_id: 41205644 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127204099
+[cpu0_ROB] entry:  25 instr_id: 41205645 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204116
+[cpu0_ROB] entry:  26 instr_id: 41205646 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204117
+[cpu0_ROB] entry:  27 instr_id: 41205647 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127204109
+[cpu0_ROB] entry:  28 instr_id: 41205648 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204117
+[cpu0_ROB] entry:  29 instr_id: 41205649 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204118
+[cpu0_ROB] entry:  30 instr_id: 41205650 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204118
+[cpu0_ROB] entry:  31 instr_id: 41205651 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127205172
+[cpu0_ROB] entry:  32 instr_id: 41205652 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127204110
+[cpu0_ROB] entry:  33 instr_id: 41205653 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127205172
+[cpu0_ROB] entry:  34 instr_id: 41205654 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127204111
+[cpu0_ROB] entry:  35 instr_id: 41205655 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204117
+[cpu0_ROB] entry:  36 instr_id: 41205656 fetched: 2 scheduled: 2 executed: 2 num_reg_dependent: 0 num_mem_ops: 0 event: 127204118
+[cpu0_ROB] entry:  37 instr_id: 41205657 fetched: 2 scheduled: 2 executed: 0 num_reg_dependent: 1 num_mem_ops: 0 event: 127204112
+
+[cpu0_LQ] entry:   0 empty
+[cpu0_LQ] entry:   1 empty
+[cpu0_LQ] entry:   2 empty
+[cpu0_LQ] entry:   3 empty
+[cpu0_LQ] entry:   4 empty
+[cpu0_LQ] entry:   5 empty
+[cpu0_LQ] entry:   6 empty
+[cpu0_LQ] entry:   7 empty
+[cpu0_LQ] entry:   8 empty
+[cpu0_LQ] entry:   9 empty
+[cpu0_LQ] entry:  10 empty
+[cpu0_LQ] entry:  11 empty
+[cpu0_LQ] entry:  12 empty
+[cpu0_LQ] entry:  13 empty
+[cpu0_LQ] entry:  14 empty
+[cpu0_LQ] entry:  15 empty
+[cpu0_LQ] entry:  16 empty
+[cpu0_LQ] entry:  17 empty
+[cpu0_LQ] entry:  18 empty
+[cpu0_LQ] entry:  19 empty
+[cpu0_LQ] entry:  20 empty
+[cpu0_LQ] entry:  21 empty
+[cpu0_LQ] entry:  22 empty
+[cpu0_LQ] entry:  23 empty
+[cpu0_LQ] entry:  24 empty
+[cpu0_LQ] entry:  25 empty
+[cpu0_LQ] entry:  26 empty
+[cpu0_LQ] entry:  27 empty
+[cpu0_LQ] entry:  28 empty
+[cpu0_LQ] entry:  29 empty
+[cpu0_LQ] entry:  30 empty
+[cpu0_LQ] entry:  31 empty
+[cpu0_LQ] entry:  32 empty
+[cpu0_LQ] entry:  33 empty
+[cpu0_LQ] entry:  34 empty
+[cpu0_LQ] entry:  35 instr_id: 41205620 address: 0x51cadb0 fetch_issued: true event_cycle: 127204115 waits on -
+[cpu0_LQ] entry:  36 empty
+[cpu0_LQ] entry:  37 empty
+[cpu0_LQ] entry:  38 empty
+[cpu0_LQ] entry:  39 empty
+[cpu0_LQ] entry:  40 empty
+[cpu0_LQ] entry:  41 empty
+[cpu0_LQ] entry:  42 empty
+[cpu0_LQ] entry:  43 empty
+[cpu0_LQ] entry:  44 empty
+[cpu0_LQ] entry:  45 empty
+[cpu0_LQ] entry:  46 empty
+[cpu0_LQ] entry:  47 empty
+[cpu0_LQ] entry:  48 empty
+[cpu0_LQ] entry:  49 empty
+[cpu0_LQ] entry:  50 empty
+[cpu0_LQ] entry:  51 empty
+[cpu0_LQ] entry:  52 empty
+[cpu0_LQ] entry:  53 empty
+[cpu0_LQ] entry:  54 empty
+[cpu0_LQ] entry:  55 empty
+[cpu0_LQ] entry:  56 empty
+[cpu0_LQ] entry:  57 empty
+[cpu0_LQ] entry:  58 empty
+[cpu0_LQ] entry:  59 empty
+[cpu0_LQ] entry:  60 empty
+[cpu0_LQ] entry:  61 empty
+[cpu0_LQ] entry:  62 empty
+[cpu0_LQ] entry:  63 empty
+[cpu0_LQ] entry:  64 empty
+[cpu0_LQ] entry:  65 empty
+[cpu0_LQ] entry:  66 empty
+[cpu0_LQ] entry:  67 empty
+[cpu0_LQ] entry:  68 empty
+[cpu0_LQ] entry:  69 empty
+[cpu0_LQ] entry:  70 empty
+[cpu0_LQ] entry:  71 empty
+[cpu0_LQ] entry:  72 empty
+[cpu0_LQ] entry:  73 empty
+[cpu0_LQ] entry:  74 empty
+[cpu0_LQ] entry:  75 empty
+[cpu0_LQ] entry:  76 empty
+[cpu0_LQ] entry:  77 empty
+[cpu0_LQ] entry:  78 empty
+[cpu0_LQ] entry:  79 empty
+[cpu0_LQ] entry:  80 empty
+[cpu0_LQ] entry:  81 empty
+[cpu0_LQ] entry:  82 empty
+[cpu0_LQ] entry:  83 empty
+[cpu0_LQ] entry:  84 empty
+[cpu0_LQ] entry:  85 empty
+[cpu0_LQ] entry:  86 empty
+[cpu0_LQ] entry:  87 empty
+[cpu0_LQ] entry:  88 empty
+[cpu0_LQ] entry:  89 empty
+[cpu0_LQ] entry:  90 empty
+[cpu0_LQ] entry:  91 empty
+[cpu0_LQ] entry:  92 empty
+[cpu0_LQ] entry:  93 empty
+[cpu0_LQ] entry:  94 empty
+[cpu0_LQ] entry:  95 empty
+[cpu0_LQ] entry:  96 empty
+[cpu0_LQ] entry:  97 empty
+[cpu0_LQ] entry:  98 empty
+[cpu0_LQ] entry:  99 empty
+[cpu0_LQ] entry: 100 empty
+[cpu0_LQ] entry: 101 empty
+[cpu0_LQ] entry: 102 empty
+[cpu0_LQ] entry: 103 empty
+[cpu0_LQ] entry: 104 empty
+[cpu0_LQ] entry: 105 empty
+[cpu0_LQ] entry: 106 empty
+[cpu0_LQ] entry: 107 empty
+[cpu0_LQ] entry: 108 empty
+[cpu0_LQ] entry: 109 empty
+[cpu0_LQ] entry: 110 empty
+[cpu0_LQ] entry: 111 empty
+[cpu0_LQ] entry: 112 empty
+[cpu0_LQ] entry: 113 empty
+[cpu0_LQ] entry: 114 empty
+[cpu0_LQ] entry: 115 empty
+[cpu0_LQ] entry: 116 empty
+[cpu0_LQ] entry: 117 empty
+[cpu0_LQ] entry: 118 empty
+[cpu0_LQ] entry: 119 empty
+[cpu0_LQ] entry: 120 empty
+[cpu0_LQ] entry: 121 empty
+[cpu0_LQ] entry: 122 empty
+[cpu0_LQ] entry: 123 empty
+[cpu0_LQ] entry: 124 empty
+[cpu0_LQ] entry: 125 empty
+[cpu0_LQ] entry: 126 empty
+[cpu0_LQ] entry: 127 empty
+
+cpu0_SQ empty
+
+LLC_MSHR empty
+
+LLC_tags empty
+
+LLC_translation empty
+
+LLC_RQ empty
+
+LLC_WQ empty
+
+LLC_PQ empty
+
+[cpu0_DTLB_MSHR] entry:   0 instr_id: 41205620 address: 0x51cadb0 v_addr: 0x51cadb0 type: LOAD event: 18446744073709551615
+
+cpu0_DTLB_tags empty
+
+cpu0_DTLB_translation empty
+
+cpu0_DTLB_RQ empty
+
+cpu0_DTLB_WQ empty
+
+cpu0_DTLB_PQ empty
+
+cpu0_ITLB_MSHR empty
+
+cpu0_ITLB_tags empty
+
+cpu0_ITLB_translation empty
+
+cpu0_ITLB_RQ empty
+
+cpu0_ITLB_WQ empty
+
+cpu0_ITLB_PQ empty
+
+cpu0_L1D_MSHR empty
+
+cpu0_L1D_tags empty
+
+[cpu0_L1D_translation] entry:   0 instr_id: 41205620 address: 0x51cadb0 v_addr: 0x51cadb0 is_translated: false translate_issued: true event_cycle: 127203601
+
+cpu0_L1D_RQ empty
+
+cpu0_L1D_WQ empty
+
+cpu0_L1D_PQ empty
+
+cpu0_L1D_RQ empty
+
+cpu0_L1D_WQ empty
+
+cpu0_L1D_PQ empty
+
+cpu0_L1I_MSHR empty
+
+cpu0_L1I_tags empty
+
+cpu0_L1I_translation empty
+
+cpu0_L1I_RQ empty
+
+cpu0_L1I_WQ empty
+
+cpu0_L1I_PQ empty
+
+cpu0_L2C_MSHR empty
+
+cpu0_L2C_tags empty
+
+cpu0_L2C_translation empty
+
+cpu0_L2C_RQ empty
+
+cpu0_L2C_WQ empty
+
+cpu0_L2C_PQ empty
+
+cpu0_L2C_RQ empty
+
+cpu0_L2C_WQ empty
+
+cpu0_L2C_PQ empty
+
+[cpu0_STLB_MSHR] entry:   0 instr_id: 41205620 address: 0x51cadb0 v_addr: 0x51cadb0 type: LOAD event: 18446744073709551615
+
+cpu0_STLB_tags empty
+
+cpu0_STLB_translation empty
+
+cpu0_STLB_RQ empty
+
+cpu0_STLB_WQ empty
+
+cpu0_STLB_PQ empty
+
+cpu0_STLB_RQ empty
+
+cpu0_STLB_WQ empty
+
+cpu0_STLB_PQ empty
+
+cpu0_STLB_RQ empty
+
+cpu0_STLB_WQ empty
+
+cpu0_STLB_PQ empty
+
+DRAM Channel 0
+[RQ] entry:   0 empty
+[RQ] entry:   1 empty
+[RQ] entry:   2 empty
+[RQ] entry:   3 empty
+[RQ] entry:   4 empty
+[RQ] entry:   5 empty
+[RQ] entry:   6 empty
+[RQ] entry:   7 empty
+[RQ] entry:   8 empty
+[RQ] entry:   9 empty
+[RQ] entry:  10 empty
+[RQ] entry:  11 empty
+[RQ] entry:  12 empty
+[RQ] entry:  13 empty
+[RQ] entry:  14 empty
+[RQ] entry:  15 empty
+[RQ] entry:  16 empty
+[RQ] entry:  17 empty
+[RQ] entry:  18 empty
+[RQ] entry:  19 empty
+[RQ] entry:  20 empty
+[RQ] entry:  21 empty
+[RQ] entry:  22 empty
+[RQ] entry:  23 empty
+[RQ] entry:  24 empty
+[RQ] entry:  25 empty
+[RQ] entry:  26 empty
+[RQ] entry:  27 empty
+[RQ] entry:  28 empty
+[RQ] entry:  29 empty
+[RQ] entry:  30 empty
+[RQ] entry:  31 empty
+[RQ] entry:  32 empty
+[RQ] entry:  33 empty
+[RQ] entry:  34 empty
+[RQ] entry:  35 empty
+[RQ] entry:  36 empty
+[RQ] entry:  37 empty
+[RQ] entry:  38 empty
+[RQ] entry:  39 empty
+[RQ] entry:  40 empty
+[RQ] entry:  41 empty
+[RQ] entry:  42 empty
+[RQ] entry:  43 empty
+[RQ] entry:  44 empty
+[RQ] entry:  45 empty
+[RQ] entry:  46 em
