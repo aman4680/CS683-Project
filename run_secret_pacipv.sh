@@ -14,12 +14,12 @@ SIM_INST=100000000      # 100 Million instructions for simulation
 # Assumes the standard ChampSim project structure.
 CHAMPSIM_BIN="./bin/champsim-pacipv"
 TRACES_DIR="../traces/secret_traces"
-OUTPUT_DIR="./results/pacipv_policy/secret_traces/compute_fp"
+OUTPUT_DIR="./results/pacipv_policy/secret_traces/crypto"
 
 # --- Trace Categories ---
 # An array of the directories containing the traces to run.
 # TRACE_SETS=("compute_int" "compute_fp" "crypto" "srv")
-TRACE_SETS=("compute_fp")
+TRACE_SETS=("crypto")
 
 # --- Pre-run Checks ---
 # Check if the ChampSim binary exists and is executable.
