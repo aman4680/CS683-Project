@@ -11,11 +11,12 @@ SIM_INST=100000000      # 100 Million instructions for simulation
 
 # --- Path Definitions ---
 CHAMPSIM_BIN="./bin/champsim-duel-ipv"
-TRACES_DIR="../traces/public_traces"
-OUTPUT_DIR="./results/duel_policy/public_traces"
+TRACES_DIR="../traces/secret_traces"
+OUTPUT_DIR="./results/duel_policy/secret_traces/"
 
 # --- Trace Categories ---
-TRACE_SETS=("compute_int" "compute_fp" "srv")
+# TRACE_SETS=("compute_int" "compute_fp" "srv")
+TRACE_SETS=("crypto")
 
 # --- Pre-run Checks ---
 if [ ! -x "$CHAMPSIM_BIN" ]; then
@@ -65,12 +66,12 @@ for set in "${TRACE_SETS[@]}"; do
             #     "$trace_file" > "$output_file" 2>&1 &
 
             env \
-                LLC_IPV_INSTR="1_2_2_1_4#1_2_1_1_4" \
-                LLC_IPV_DATA="1_1_1_2_4#1_1_2_2_4" \
-                "$CHAMPSIM_BIN" \
-                --warmup-instructions "$WARMUP_INST" \
-                --simulation-instructions "$SIM_INST" \
-                "$trace_file" > "$output_file" 2>&1 &
+            LLC_IPV_INSTR="1_2_2_1_4#1_2_1_1_4" \
+            LLC_IPV_DATA="1_1_1_2_4#1_1_2_2_4" \
+            "$CHAMPSIM_BIN" \
+            --warmup-instructions "$WARMUP_INST" \
+            --simulation-instructions "$SIM_INST" \
+            "$trace_file" > "$output_file" 2>&1
                 
             echo "✅ Finished duel_ipv simulation. Results saved to: $output_file"
         fi
@@ -81,3 +82,5 @@ echo ""
 echo "🎉 All simulations are complete!"
 
 # nohup ./run_public_duel.sh > output_logs/duel_public_trace.log 2>&1 &
+
+# LLC_IPV_INSTR="1_2_2_1_4#1_2_1_1_4" LLC_IPV_DATA="1_1_1_2_4#1_1_2_2_4" ./bin/champsim-duel-ipv --warmup-instructions 30000000 --simulation-instructions 100000000 ../traces/public_traces/compute_fp/compute_fp_10.champsimtrace.xz > results/output.txt

@@ -1,14 +1,6 @@
 /*
  * This is the new Set Dueling IPV replacement policy.
- *
- * HOW TO USE:
- * 1. Add this file to your build system (Makefile/CMakeLists.txt).
- * 2. REMOVE 'replacement/pacipv/pacipv.cc' from your build system.
- * (You must compile only one replacement policy).
- * 3. When running, set TWO environment variables for the LLC:
- * export LLC_IPV_INSTR="0,1,1,0,3#0,1,0,0,3"
- * export LLC_IPV_DATA="0,0,0,1,3#0,0,1,1,3"
- */
+*/
 
 #include <iostream>
 #include <cstdlib>
@@ -22,8 +14,8 @@
 #include "cache.h"
 #include "champsim.h" // Needed for instruction counter
 
-uint64_t current_instr_count[NUM_CPUS] = {0};
-
+// uint64_t current_instr_count[NUM_CPUS] = {0};
+extern uint64_t current_instr_count[NUM_CPUS];
 
 // Create a new namespace for our dueling policy
 namespace DUEL_IPV_Policy
@@ -108,7 +100,7 @@ namespace DUEL_IPV_Policy
 
     // --- Dueling Parameters ---
     constexpr uint32_t DUEL_NUM_SETS = 32;     // 16 for instr, 16 for data
-    constexpr uint32_t DUEL_EPOCH_LENGTH = 256000; // Check winner every 256k instrs
+    constexpr uint32_t DUEL_EPOCH_LENGTH = 512000; // Check winner every 512k instrs
 
     // --- Global Dueling State (per cache) ---
     // This state is shared by all sets in a cache
@@ -371,6 +363,7 @@ void CACHE::update_replacement_state(
     // --- NEW: Epoch Check Logic (only for LLC) ---
     if (DUEL_IPV_Policy::cache_duel_state.count(this)) // Check if this cache has duel state
     {
+        // std::cout << "[DEBUG] update_replacement_state: Cache " << this->NAME << " has duel state." << std::endl;
         DUEL_IPV_Policy::DuelingState* global_state = &DUEL_IPV_Policy::cache_duel_state[this];
 
         // 'current_instr_count' is a global from champsim.h

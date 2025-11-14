@@ -30,6 +30,8 @@
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
+uint64_t current_instr_count[NUM_CPUS] = {0};
+
 std::chrono::seconds elapsed_time();
 
 long O3_CPU::operate()
@@ -627,6 +629,7 @@ long O3_CPU::retire_rob()
   }
   auto retire_count = std::distance(retire_begin, retire_end);
   num_retired += retire_count;
+  current_instr_count[cpu] = num_retired;
   ROB.erase(retire_begin, retire_end);
 
   return retire_count;
