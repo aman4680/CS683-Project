@@ -12,11 +12,11 @@ SIM_INST=100000000      # 100 Million instructions for simulation
 # --- Path Definitions ---
 CHAMPSIM_BIN="./bin/champsim-duel-ipv"
 TRACES_DIR="../traces/secret_traces"
-OUTPUT_DIR="./results/duel_policy/secret_traces/"
+OUTPUT_DIR="./results/duel_policy_512/secret_traces/"
 
 # --- Trace Categories ---
 # TRACE_SETS=("compute_int" "compute_fp" "srv")
-TRACE_SETS=("compute_fp")
+TRACE_SETS=("compute_fp" "crypto")
 
 # --- Pre-run Checks ---
 if [ ! -x "$CHAMPSIM_BIN" ]; then
