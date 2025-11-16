@@ -1,12 +1,6 @@
 /*
- * This is the new Set Dueling IPV replacement policy (DUEL-IPV).
- *
- * It duels two complete, stateful PACIPV policies (e.g., Instr-tuned vs. Data-tuned).
- * It uses an epoch-based system to count misses and determine a winner.
- *
- * It uses the unbiased random monitor set selection from drrip.cc to
- * select which sets act as monitors for each policy.
- */
+ * This is the new Set Dueling IPV replacement policy.
+*/
 
 #include <iostream>
 #include <cstdlib>
@@ -20,7 +14,7 @@
 #include "cache.h"
 #include "champsim.h" // Needed for instruction counter
 
-// Global instruction counter from ChampSim
+// uint64_t current_instr_count[NUM_CPUS] = {0};
 extern uint64_t current_instr_count[NUM_CPUS];
 
 // Create a new namespace for our dueling policy
@@ -34,7 +28,7 @@ namespace DUEL_IPV_Policy
         L2C,
         LLC
     };
-
+    
     // --- STEP 1: Define the original PACIPV logic ---
     // This is the PACIPV class from pacipv.cc, renamed to PACIPV_internal.
     // It will be used *inside* our new DUEL_IPV class.
@@ -105,16 +99,7 @@ namespace DUEL_IPV_Policy
     }; // --- End of PACIPV_internal class ---
 
     // --- Dueling Parameters ---
-
-    // --- NEW: Dueling constants inspired by drrip.cc ---
-    constexpr std::size_t NUM_POLICY = 2; // Policy 0 (Instr), Policy 1 (Data)
-    constexpr std::size_t SDM_SIZE = 32;  // 32 monitor sets *per policy* *per core*
-    constexpr std::size_t TOTAL_SDM_SETS = NUM_CPUS * NUM_POLICY * SDM_SIZE;
-
-    // --- NEW: Global map for random monitor sets (from drrip.cc) ---
-    std::map<CACHE*, std::vector<std::size_t>> rand_sets;
-
-    // --- ORIGINAL: Epoch Dueling parameters (Keep this) ---
+    constexpr uint32_t DUEL_NUM_SETS = 32;     // 16 for instr, 16 for data
     constexpr uint32_t DUEL_EPOCH_LENGTH = 512000; // Check winner every 512k instrs
 
     // --- Global Dueling State (per cache) ---
@@ -138,45 +123,31 @@ namespace DUEL_IPV_Policy
     // One of these will be created *per set*
     class DUEL_IPV
     {
-    public:
-        // --- NEW: Define the set's purpose ---
-        // This replaces the old `set_index` check
-        enum class SetType
-        {
-            MONITOR_A, // Monitors for Instr-Policy (Policy 0)
-            MONITOR_B, // Monitors for Data-Policy (Policy 1)
-            FOLLOWER   // Follows the winner
-        };
-
     private:
         PACIPV_internal policy_instr; // Internal policy for instruction-heavy
         PACIPV_internal policy_data;  // Internal policy for data-heavy
-        DuelingState* global_state;   // Pointer to the cache-wide shared state
-        
-        // --- NEW: Store the type ---
-        SetType set_type; // This set's designated purpose
+        DuelingState* global_state; // Pointer to the cache-wide shared state
+        uint32_t set_index;         // This set's index
 
     public:
-        // --- MODIFIED: Constructor ---
-        // It no longer takes `set_idx`, but takes its `type`
-        DUEL_IPV(uint32_t ways, DuelingState* state, SetType type)
+        // Constructor: Initialize both internal policies
+        DUEL_IPV(uint32_t ways, uint32_t set_idx, DuelingState* state)
             : policy_instr(ways, state->demand_vector_instr, state->prefetch_vector_instr),
               policy_data(ways, state->demand_vector_data, state->prefetch_vector_data),
               global_state(state),
-              set_type(type) // Store the type
+              set_index(set_idx)
         {
         }
 
-        // --- MODIFIED: Helper to get the correct policy ---
-        // This now uses the `set_type` enum instead of a biased index check
+        // Helper to get the correct policy based on set index and winner
         PACIPV_internal* get_policy()
         {
-            if (set_type == SetType::MONITOR_A) {
-                return &policy_instr; // This set *always* uses instr policy
-            } else if (set_type == SetType::MONITOR_B) {
-                return &policy_data; // This set *always* uses data policy
+            if (set_index < (DUEL_NUM_SETS / 2)) {
+                return &policy_instr; // This set *always* uses instr policy (Monitor A)
+            } else if (set_index < DUEL_NUM_SETS) {
+                return &policy_data; // This set *always* uses data policy (Monitor B)
             } else {
-                // This is a "follower" set, use the global winner
+                // This is a "winner" set, use the global winner
                 if (global_state->current_winner == 0)
                     return &policy_instr;
                 else
@@ -191,13 +162,12 @@ namespace DUEL_IPV_Policy
             return get_policy()->find_victim();
         }
 
-        // --- MODIFIED: Insert functions now track misses ---
-        // This logic is now based on `set_type`
+        // The insert functions now track misses for monitor sets
         void demand_insert(uint32_t way)
         {
-            if (set_type == SetType::MONITOR_A) {
+            if (set_index < (DUEL_NUM_SETS / 2)) {
                 global_state->policy_instr_misses++;
-            } else if (set_type == SetType::MONITOR_B) {
+            } else if (set_index < DUEL_NUM_SETS) {
                 global_state->policy_data_misses++;
             }
             get_policy()->demand_insert(way);
@@ -208,12 +178,11 @@ namespace DUEL_IPV_Policy
             get_policy()->demand_promote(way);
         }
 
-        // --- MODIFIED: Insert functions now track misses ---
         void prefetch_insert(uint32_t way)
         {
-            if (set_type == SetType::MONITOR_A) {
+            if (set_index < (DUEL_NUM_SETS / 2)) {
                 global_state->policy_instr_misses++;
-            } else if (set_type == SetType::MONITOR_B) {
+            } else if (set_index < DUEL_NUM_SETS) {
                 global_state->policy_data_misses++;
             }
             get_policy()->prefetch_insert(way);
@@ -265,7 +234,7 @@ namespace DUEL_IPV_Policy
             return false;
         }
         return true;
-    }
+    }    
 } // --- End of namespace DUEL_IPV_Policy ---
 
 // --- STEP 4: Define the CACHE:: functions ---
@@ -323,14 +292,11 @@ void CACHE::initialize_replacement()
         std::exit(-1);
     }
 
-    // Adjust for LLC specifically
-    if (cache == DUEL_IPV_Policy::cache_type::LLC) {
-        if (ipv_string_data == nullptr) {
-            std::cerr << "[ERROR (" << this->NAME << ")] LLC_IPV_DATA not specified. Dueling requires two policies." << std::endl;
-            std::exit(-1);
-        }
-    } else {
-        ipv_string_data = ipv_string_instr; // Non-LLC caches just use the one policy
+    if (cache == DUEL_IPV_Policy::cache_type::LLC && ipv_string_data == nullptr) {
+        std::cerr << "[ERROR (" << this->NAME << ")] LLC_IPV_DATA not specified. Dueling requires two policies." << std::endl;
+        std::exit(-1);
+    } else if (cache == DUEL_IPV_Policy::cache_type::LLC && ipv_string_data == nullptr) {
+        ipv_string_data = ipv_string_instr; // Fallback if not LLC
     }
 
     // --- NEW: Initialize global duel state for this cache ---
@@ -340,78 +306,30 @@ void CACHE::initialize_replacement()
     // --- NEW: Parse BOTH strings into the global state ---
     if (!DUEL_IPV_Policy::parse_ipv_string(std::string(ipv_string_instr), global_state->demand_vector_instr, global_state->prefetch_vector_instr, this->NAME))
         std::exit(-1);
-
+    
     if (!DUEL_IPV_Policy::parse_ipv_string(std::string(ipv_string_data), global_state->demand_vector_data, global_state->prefetch_vector_data, this->NAME))
         std::exit(-1);
 
     // Print out the parsed IPVS
-    std::cout << "[" << this->NAME << "] INSTR (Policy A) Demand IPV:";
+    std::cout << "[" << this->NAME << "] INSTR Demand IPV:";
     for (const uint32_t v : global_state->demand_vector_instr) std::cout << " " << v;
     std::cout << " Prefetch IPV:";
     for (const uint32_t v : global_state->prefetch_vector_instr) std::cout << " " << v;
     std::cout << std::endl;
 
     if (cache == DUEL_IPV_Policy::cache_type::LLC) {
-        std::cout << "[" << this->NAME << "] DATA  (Policy B) Demand IPV:";
+        std::cout << "[" << this->NAME << "] DATA  Demand IPV:";
         for (const uint32_t v : global_state->demand_vector_data) std::cout << " " << v;
         std::cout << " Prefetch IPV:";
         for (const uint32_t v : global_state->prefetch_vector_data) std::cout << " " << v;
         std::cout << std::endl;
     }
 
-    // --- NEW: Add drrip.cc's random set selection logic ---
-    // This populates the ::rand_sets[this] global vector with unique, random set indices
-    // Only do this if we are actually dueling (e.g., in the LLC)
-    if (cache == DUEL_IPV_Policy::cache_type::LLC) {
-        std::cout << "[" << this->NAME << "] Selecting " << ::DUEL_IPV_Policy::TOTAL_SDM_SETS
-                  << " random monitor sets for " << NUM_CPUS << " cores." << std::endl;
-                  
-        std::size_t rand_seed = 1103515245 + 12345;
-        for (std::size_t i = 0; i < ::DUEL_IPV_Policy::TOTAL_SDM_SETS; i++) {
-            std::size_t val = (rand_seed / 65536) % NUM_SET;
-            auto loc = std::lower_bound(std::begin(::DUEL_IPV_Policy::rand_sets[this]), std::end(::DUEL_IPV_Policy::rand_sets[this]), val);
 
-            while (loc != std::end(::DUEL_IPV_Policy::rand_sets[this]) && *loc == val) {
-                rand_seed = rand_seed * 1103515245 + 12345;
-                val = (rand_seed / 65536) % NUM_SET;
-                loc = std::lower_bound(std::begin(::DUEL_IPV_Policy::rand_sets[this]), std::end(::DUEL_IPV_Policy::rand_sets[this]), val);
-            }
-            ::DUEL_IPV_Policy::rand_sets[this].insert(loc, val);
-        }
-    }
-
-    // --- NEW: Create a lookup map for our random sets ---
-    // This makes it easy to find a set's type during initialization
-    std::map<std::size_t, DUEL_IPV_Policy::DUEL_IPV::SetType> monitor_set_map;
-    if (cache == DUEL_IPV_Policy::cache_type::LLC) {
-        auto rand_set_it = std::begin(::DUEL_IPV_Policy::rand_sets[this]);
-        for (std::size_t cpu = 0; cpu < NUM_CPUS; cpu++) {
-            // First SDM_SIZE sets for this CPU are MONITOR_A (Instr)
-            for (std::size_t i = 0; i < ::DUEL_IPV_Policy::SDM_SIZE; i++) {
-                monitor_set_map[*rand_set_it++] = DUEL_IPV_Policy::DUEL_IPV::SetType::MONITOR_A;
-            }
-            // Next SDM_SIZE sets for this CPU are MONITOR_B (Data)
-            for (std::size_t i = 0; i < ::DUEL_IPV_Policy::SDM_SIZE; i++) {
-                monitor_set_map[*rand_set_it++] = DUEL_IPV_Policy::DUEL_IPV::SetType::MONITOR_B;
-            }
-        }
-    }
-
-    // --- MODIFIED: Allocate the DUEL_IPV policies ---
+    // --- NEW: Allocate the DUEL_IPV policies ---
     DUEL_IPV_Policy::policies[this] = std::vector<DUEL_IPV_Policy::DUEL_IPV>();
     for (size_t idx = 0; idx < NUM_SET; idx++) {
-        
-        // Default to FOLLOWER. If we aren't LLC, all sets will be followers.
-        auto type = DUEL_IPV_Policy::DUEL_IPV::SetType::FOLLOWER;
-
-        // If we are LLC, check if this set 'idx' is in our map of random monitors
-        if (cache == DUEL_IPV_Policy::cache_type::LLC && monitor_set_map.count(idx)) {
-            type = monitor_set_map[idx]; // It's a monitor set!
-        }
-
-        // Pass the type (MONITOR_A, MONITOR_B, or FOLLOWER) to the constructor
-        // For non-LLC, this will just pass FOLLOWER every time, which is correct.
-        DUEL_IPV_Policy::policies[this].emplace_back(NUM_WAY, global_state, type);
+        DUEL_IPV_Policy::policies[this].emplace_back(NUM_WAY, idx, global_state);
     }
 }
 
@@ -424,9 +342,8 @@ uint32_t CACHE::find_victim(
     [[maybe_unused]] uint64_t full_addr,
     [[maybe_unused]] uint32_t type)
 {
-    // --- UNCHANGED ---
-    // Delegate to our DUEL_IPV object for this set
     assert(set < DUEL_IPV_Policy::policies[this].size());
+    // Delegate to our DUEL_IPV object for this set
     return DUEL_IPV_Policy::policies[this][set].find_victim();
 }
 
@@ -443,30 +360,29 @@ void CACHE::update_replacement_state(
     assert(way < NUM_WAY);
     assert(set < DUEL_IPV_Policy::policies[this].size());
 
-    // --- Epoch Check Logic (only for LLC) ---
-    // This logic is still correct for your epoch-based dueling.
-    // It only runs for caches that have a DuelingState (LLC).
+    // --- NEW: Epoch Check Logic (only for LLC) ---
     if (DUEL_IPV_Policy::cache_duel_state.count(this)) // Check if this cache has duel state
     {
+        // std::cout << "[DEBUG] update_replacement_state: Cache " << this->NAME << " has duel state." << std::endl;
         DUEL_IPV_Policy::DuelingState* global_state = &DUEL_IPV_Policy::cache_duel_state[this];
 
         // 'current_instr_count' is a global from champsim.h
         if (current_instr_count[triggering_cpu] - global_state->last_epoch_instrs > DUEL_IPV_Policy::DUEL_EPOCH_LENGTH) {
-
-            // Only duel if the policies are different (e.g., not for L1/L2)
+            
+            // Only duel if the policies are different
             if(global_state->demand_vector_instr != global_state->demand_vector_data) {
                 if (global_state->policy_data_misses < global_state->policy_instr_misses) {
                     global_state->current_winner = 1; // data wins
                 } else {
                     global_state->current_winner = 0; // instr wins (or ties)
                 }
-
-                // Debug print
-                std::cout << "[DUEL] CPU " << triggering_cpu << " Epoch ended. INSTR misses = " << global_state->policy_instr_misses
-                          << ", DATA misses = " << global_state->policy_data_misses
-                          << ". Winner = " << (global_state->current_winner == 0 ? "INSTR" : "DATA")
-                          << std::endl;
             }
+
+            // <<< PUT DEBUG PRINT HERE >>>
+    std::cout << "[DUEL] Epoch ended. INSTR misses = " << global_state->policy_instr_misses
+              << ", DATA misses = " << global_state->policy_data_misses
+              << ". Winner = " << (global_state->current_winner == 0 ? "INSTR" : "DATA") 
+              << std::endl;
 
             // Reset for next epoch
             global_state->policy_instr_misses = 0;
@@ -475,9 +391,7 @@ void CACHE::update_replacement_state(
         }
     }
 
-    // --- Policy Update Logic (Unchanged) ---
-    // This part remains the same. The DUEL_IPV object's insert/promote
-    // functions will now internally handle miss counting based on their SetType.
+    // --- (Original logic from pacipv.cc) ---
     int was_prefetch = access_type{type} == access_type::PREFETCH;
 
     if (was_prefetch) {
@@ -500,3 +414,4 @@ void CACHE::replacement_final_stats()
     // Do nothing
     return;
 }
+
